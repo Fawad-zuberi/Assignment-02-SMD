@@ -1,3 +1,5 @@
+import 'package:assignment2/screens/LoginScreen.dart';
+import 'package:assignment2/screens/SignupScreen.dart';
 import 'package:assignment2/widgets/Button.dart';
 import 'package:flutter/material.dart';
 
@@ -71,12 +73,22 @@ class _HomePageState extends State<HomePage>
               children: [
                 BlueButton(
                   title: 'Login',
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
                 ),
                 const SizedBox(width: 30),
                 BlueButton(
                   title: 'Signup',
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignUpScreen()),
+                    );
+                  },
                 ),
               ],
             ),
