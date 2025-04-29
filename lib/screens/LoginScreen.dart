@@ -1,3 +1,4 @@
+import 'package:assignment2/screens/EventList.dart';
 import 'package:assignment2/screens/SignupScreen.dart';
 import 'package:assignment2/widgets/Button.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
         textColor: Colors.white,
         fontSize: 16.0,
       );
+
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => EventListScreen()));
     } else {
       Fluttertoast.showToast(
         msg: "Please enter all fields",
