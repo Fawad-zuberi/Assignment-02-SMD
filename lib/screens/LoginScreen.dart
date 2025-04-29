@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
         msg: "Logging in as $email",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.TOP,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.green,
         textColor: Colors.white,
         fontSize: 16.0,
       );
@@ -47,6 +47,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[50],
+      appBar: AppBar(
+        title: const Text(''),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
