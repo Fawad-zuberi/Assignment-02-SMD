@@ -1,72 +1,94 @@
+import 'package:assignment2/screens/DetailView.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EventCard extends StatelessWidget {
   final Map<String, String> event;
+  final bool islogged;
 
-  const EventCard({super.key, required this.event});
+  const EventCard({super.key, required this.event, required this.islogged});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      elevation: 5,
-      shadowColor: Colors.blue,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Image.asset(
-              event['image']!, // Image for the event
-              height: 180,
-              width: double.infinity,
-              fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        if (!islogged) {
+          Fluttertoast.showToast(
+              msg: "Please Login to View Details",
+              textColor: Colors.white,
+              fontSize: 16.0,
+              backgroundColor: Colors.red,
+              gravity: ToastGravity.TOP);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EventDetailScreen(event: event),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  event['eventName']!, // Event name
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Venue: ${event['venue']}', // Event venue
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.blueGrey,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Date: ${event['date']}', // Event category
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.blueGrey,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Time: ${event['timing']}', // Event category
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.blueGrey,
-                  ),
-                ),
-              ],
+          );
+        }
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        elevation: 5,
+        shadowColor: Colors.blue,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Image.asset(
+                event['image']!,
+                height: 180,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    event['eventName']!,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Venue: ${event['venue']}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.blueGrey,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Date: ${event['date']}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.blueGrey,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Time: ${event['timing']}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.blueGrey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:assignment2/screens/EventList.dart';
 import 'package:assignment2/screens/LoginScreen.dart';
 import 'package:assignment2/screens/SignupScreen.dart';
 import 'package:assignment2/widgets/Button.dart';
@@ -68,25 +69,43 @@ class _HomePageState extends State<HomePage>
               ),
             ),
             const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                BlueButton(
-                  title: 'Login',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                    );
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    BlueButton(
+                      title: 'Login',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 30),
+                    BlueButton(
+                      title: 'Signup',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignUpScreen()),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 30),
+                const SizedBox(height: 30),
                 BlueButton(
-                  title: 'Signup',
+                  title: 'View Upcoming Events',
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignUpScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => EventListScreen()),
                     );
                   },
                 ),

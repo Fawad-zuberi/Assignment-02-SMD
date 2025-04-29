@@ -1,5 +1,7 @@
+import 'package:assignment2/screens/CreateEventScree.dart';
 import 'package:assignment2/widgets/EventCard.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EventListScreen extends StatefulWidget {
   const EventListScreen({super.key});
@@ -52,6 +54,7 @@ class _EventListScreenState extends State<EventListScreen> {
     },
   ];
 
+  final loggedin = true;
   String selectedCategory = 'All';
 
   List<Map<String, String>> get filteredEvents {
@@ -67,12 +70,42 @@ class _EventListScreenState extends State<EventListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (!loggedin) {
+            Fluttertoast.showToast(
+                msg: "Please Login to Continue",
+                textColor: Colors.white,
+                fontSize: 16.0,
+                backgroundColor: Colors.red,
+                gravity: ToastGravity.TOP);
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CreateEventScreen()));
+          }
+        },
+        child: Icon(
+          Icons.post_add_rounded,
+          size: 30,
+        ),
+      ),
       appBar: AppBar(
         shadowColor: Colors.black,
         foregroundColor: Colors.white,
         title: const Text('Upcoming Events',
             style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blueAccent,
+        actions: [
+          if (loggedin)
+            IconButton(
+              icon: const Icon(
+                Icons.person_2_rounded,
+                color: Colors.black,
+                size: 40,
+              ),
+              onPressed: () {},
+            ),
+        ],
       ),
       body: Column(
         children: [
@@ -118,7 +151,10 @@ class _EventListScreenState extends State<EventListScreen> {
               itemCount: filteredEvents.length,
               itemBuilder: (context, index) {
                 final event = filteredEvents[index];
-                return EventCard(event: event);
+                return EventCard(
+                  event: event,
+                  islogged: loggedin,
+                );
               },
             ),
           ),
