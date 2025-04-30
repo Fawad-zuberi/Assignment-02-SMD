@@ -1,4 +1,5 @@
 import 'package:assignment2/screens/CreateEventScree.dart';
+import 'package:assignment2/screens/ProfileScreen.dart';
 import 'package:assignment2/widgets/EventCard.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -103,7 +104,13 @@ class _EventListScreenState extends State<EventListScreen> {
                 color: Colors.black,
                 size: 40,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen()),
+                );
+              },
             ),
         ],
       ),
