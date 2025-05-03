@@ -1,5 +1,11 @@
+import 'package:assignment2/BloC/Auth_Bloc.dart';
+import 'package:assignment2/BloC/Auth_events.dart';
+import 'package:assignment2/BloC/Auth_state.dart';
 import 'package:assignment2/screens/DetailView.dart';
+import 'package:assignment2/screens/HomePage.dart';
+import 'package:assignment2/widgets/Button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -76,69 +82,82 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profile"),
-        actions: [
-          IconButton(
-            icon: Icon(isEditing ? Icons.check : Icons.edit),
-            onPressed: _toggleEdit,
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildTextField("First Name", _firstNameController, false),
-            const SizedBox(height: 10),
-            _buildTextField("Last Name", _lastNameController, false),
-            const SizedBox(height: 10),
-            _buildTextField("Profession", _professionController, false),
-            const SizedBox(height: 10),
-            _buildTextField("Phone", _phoneController, false),
-            const SizedBox(height: 10),
-            _buildTextField("Email", _emailController, false),
-            const SizedBox(height: 10),
-            _buildTextField("Password", _passwordController, true),
-            const SizedBox(height: 10),
-            const SizedBox(height: 20),
-            const Divider(),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "My Events",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 10),
-            ListView.separated(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: myEvents.length,
-              separatorBuilder: (context, index) => Divider(),
-              itemBuilder: (context, index) {
-                final Map<String, String> event = myEvents[index];
-                return ListTile(
-                  title: Text(event['eventName']!),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => EventDetailScreen(
-                          event: event,
-                          isEdit: true,
-                        ),
-                      ),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Profile"),
+            actions: [
+              IconButton(
+                icon: Icon(isEditing ? Icons.check : Icons.edit),
+                onPressed: _toggleEdit,
+              )
+            ],
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                _buildTextField("First Name", _firstNameController, false),
+                const SizedBox(height: 10),
+                _buildTextField("Last Name", _lastNameController, false),
+                const SizedBox(height: 10),
+                _buildTextField("Profession", _professionController, false),
+                const SizedBox(height: 10),
+                _buildTextField("Phone", _phoneController, false),
+                const SizedBox(height: 10),
+                _buildTextField("Email", _emailController, false),
+                const SizedBox(height: 10),
+                _buildTextField("Password", _passwordController, true),
+                const SizedBox(height: 10),
+                BlueButton(
+                    title: "Logout",
+                    onPressed: () => {
+                          context.read<AuthBloc>().add(Logout()),
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage()))
+                        }),
+                const SizedBox(height: 20),
+                const Divider(),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "My Events",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: myEvents.length,
+                  separatorBuilder: (context, index) => Divider(),
+                  itemBuilder: (context, index) {
+                    final Map<String, String> event = myEvents[index];
+                    return ListTile(
+                      title: Text(event['eventName']!),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EventDetailScreen(
+                              event: event,
+                              isEdit: true,
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-            )
-          ],
-        ),
-      ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

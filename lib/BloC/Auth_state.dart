@@ -1,4 +1,5 @@
 import 'package:assignment2/Model/UserDataModel.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class AuthState {}
 

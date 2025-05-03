@@ -10,6 +10,8 @@ class AuthBloc extends Bloc<AuthEvents, AuthState> {
 
   AuthBloc(this._auth) : super(AuthInitial()) {
     on<LoginEvent>(onLoginEvent);
+    on<SignUpEvent>(onSignupEvent);
+    on<Logout>(onlogoutevent);
   }
 
   Future<void> onLoginEvent(LoginEvent event, Emitter<AuthState> emit) async {
@@ -40,5 +42,62 @@ class AuthBloc extends Bloc<AuthEvents, AuthState> {
     } catch (e) {
       emit(Unauthenticated('Login failed'));
     }
+  }
+
+  Future<void> onSignupEvent(SignUpEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+
+    // Validation logic
+    if (event.firstname.isEmpty ||
+        event.lastname.isEmpty ||
+        event.profession.isEmpty ||
+        event.phone.isEmpty ||
+        event.email.isEmpty ||
+        event.password.isEmpty) {
+      emit(Unauthenticated("Please fill all fields"));
+      return;
+    }
+
+    // Password length or format check
+    if (event.password.length < 6) {
+      emit(Unauthenticated("Password must be at least 6 characters"));
+      return;
+    }
+
+    if (event.pwd != event.repwd) {
+      emit(Unauthenticated("Re Entered Password Mismatch"));
+      return;
+    }
+    try {
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: event.email, password: event.password);
+
+      final String uid = userCredential.user!.uid;
+
+      final userMap = {
+        'firstName': event.firstname,
+        'lastName': event.lastname,
+        'email': event.email,
+        'profession': event.profession,
+        'phone': event.phone,
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+
+      await FirebaseFirestore.instance.collection('User').doc(uid).set(userMap);
+
+      final userModel = Userdatamodel.fromJson(userMap);
+
+      // Emit Authenticated state with model
+      emit(Authenticated(userModel));
+    } on FirebaseAuthException catch (e) {
+      emit(Unauthenticated(e.message ?? "Signup failed"));
+    } catch (e) {
+      emit(Unauthenticated(e.toString()));
+    }
+  }
+
+  void onlogoutevent(Logout event, Emitter<AuthState> emit) {
+    emit(Unauthenticated());
   }
 }
