@@ -1,7 +1,11 @@
+import 'package:assignment2/BloC/Auth_Bloc.dart';
+import 'package:assignment2/BloC/Auth_events.dart';
+import 'package:assignment2/BloC/Auth_state.dart';
 import 'package:assignment2/screens/EventList.dart';
 import 'package:assignment2/screens/SignupScreen.dart';
 import 'package:assignment2/widgets/Button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,32 +19,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _handleLogin() {
-    String email = _emailController.text.trim();
-    String password = _passwordController.text.trim();
-
-    if (email.isNotEmpty && password.isNotEmpty) {
-      Fluttertoast.showToast(
-        msg: "Logging in as $email",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => EventListScreen()));
-    } else {
-      Fluttertoast.showToast(
-        msg: "Please enter all fields",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
   }
 
   @override
@@ -53,78 +34,115 @@ class _LoginScreenState extends State<LoginScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Welcome Back!',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent,
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is Unauthenticated) {
+            Fluttertoast.showToast(
+              msg: state.error!,
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.redAccent,
+              textColor: Colors.white,
+            );
+          }
+
+          if (state is Authenticated) {
+            Fluttertoast.showToast(
+              msg: "Login successful!",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.TOP,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EventListScreen()),
+            );
+          }
+        },
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Welcome Back!',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      TextField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          hintText: 'Email',
+                          prefixIcon: const Icon(Icons.email),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      const SizedBox(height: 20),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: 'Password',
+                          prefixIcon: const Icon(Icons.lock),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      BlueButton(
+                        title: 'Login',
+                        onPressed: () {
+                          context.read<AuthBloc>().add(
+                                LoginEvent(
+                                  _emailController.text.trim(),
+                                  _passwordController.text.trim(),
+                                ),
+                              );
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      if (state is AuthLoading)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 20),
+                          child: CircularProgressIndicator(),
+                        ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Don't have an account? Sign up",
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 40),
-
-                // Email Field
-                TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    hintText: 'Email',
-                    prefixIcon: const Icon(Icons.email),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 20),
-
-                // Password Field
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    prefixIcon: const Icon(Icons.lock),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 30),
-
-                // Login Button
-                BlueButton(
-                  title: 'Login',
-                  onPressed: _handleLogin,
-                ),
-                const SizedBox(height: 20),
-
-                // Signup Prompt
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignUpScreen()),
-                    );
-                  },
-                  child: const Text(
-                    "Don't have an account? Sign up",
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

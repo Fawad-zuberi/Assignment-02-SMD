@@ -1,10 +1,9 @@
 import 'package:assignment2/widgets/Button.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateEventScreen extends StatefulWidget {
-  final Map<String, String>? initialEvent; // only passing if i want to edit
+  final Map<String, String>? initialEvent;
 
   const CreateEventScreen({super.key, this.initialEvent});
 

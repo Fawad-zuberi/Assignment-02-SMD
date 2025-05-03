@@ -1,7 +1,10 @@
+import 'package:assignment2/BloC/Auth_Bloc.dart';
+import 'package:assignment2/BloC/Auth_state.dart';
 import 'package:assignment2/screens/CreateEventScree.dart';
 import 'package:assignment2/screens/ProfileScreen.dart';
 import 'package:assignment2/widgets/EventCard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class EventListScreen extends StatefulWidget {
@@ -55,7 +58,6 @@ class _EventListScreenState extends State<EventListScreen> {
     },
   ];
 
-  final loggedin = true;
   String selectedCategory = 'All';
 
   List<Map<String, String>> get filteredEvents {
@@ -70,103 +72,113 @@ class _EventListScreenState extends State<EventListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (!loggedin) {
-            Fluttertoast.showToast(
-                msg: "Please Login to Continue",
-                textColor: Colors.white,
-                fontSize: 16.0,
-                backgroundColor: Colors.red,
-                gravity: ToastGravity.TOP);
-          } else {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CreateEventScreen()));
-          }
-        },
-        child: Icon(
-          Icons.post_add_rounded,
-          size: 30,
-        ),
-      ),
-      appBar: AppBar(
-        shadowColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: const Text('Upcoming Events',
-            style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.blueAccent,
-        actions: [
-          if (loggedin)
-            IconButton(
-              icon: const Icon(
-                Icons.person_2_rounded,
-                color: Colors.black,
-                size: 40,
-              ),
-              onPressed: () {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              if (state is! Authenticated) {
+                Fluttertoast.showToast(
+                    msg: "Please Login to Continue",
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                    backgroundColor: Colors.red,
+                    gravity: ToastGravity.TOP);
+              } else {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ProfileScreen()),
-                );
-              },
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CreateEventScreen()));
+              }
+            },
+            child: Icon(
+              Icons.post_add_rounded,
+              size: 30,
             ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Filter bar
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: ['All', 'Music', 'Technology', 'Art', 'Politics']
-                      .map((category) => Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  selectedCategory = category;
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: selectedCategory == category
-                                      ? Colors.blueAccent
-                                      : const Color.fromARGB(
-                                          255, 183, 179, 179),
-                                  elevation: 10,
-                                  shadowColor: Colors.black),
-                              child: Text(
-                                category,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ))
-                      .toList(),
+          ),
+          appBar: AppBar(
+            shadowColor: Colors.black,
+            foregroundColor: Colors.white,
+            title: const Text('Upcoming Events',
+                style: TextStyle(color: Colors.white)),
+            backgroundColor: Colors.blueAccent,
+            actions: [
+              if (state is Authenticated)
+                IconButton(
+                  icon: const Icon(
+                    Icons.person_2_rounded,
+                    color: Colors.black,
+                    size: 40,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProfileScreen()),
+                    );
+                  },
+                ),
+            ],
+          ),
+          body: Column(
+            children: [
+              // Filter bar
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      children: [
+                        'All',
+                        'Music',
+                        'Technology',
+                        'Art',
+                        'Politics'
+                      ]
+                          .map((category) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedCategory = category;
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          selectedCategory == category
+                                              ? Colors.blueAccent
+                                              : const Color.fromARGB(
+                                                  255, 183, 179, 179),
+                                      elevation: 10,
+                                      shadowColor: Colors.black),
+                                  child: Text(
+                                    category,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: filteredEvents.length,
+                  itemBuilder: (context, index) {
+                    final event = filteredEvents[index];
+                    return EventCard(event: event);
+                  },
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredEvents.length,
-              itemBuilder: (context, index) {
-                final event = filteredEvents[index];
-                return EventCard(
-                  event: event,
-                  islogged: loggedin,
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
