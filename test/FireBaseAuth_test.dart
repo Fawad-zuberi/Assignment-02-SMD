@@ -1,5 +1,6 @@
 import 'package:assignment2/Model/EventDataModel.dart';
 import 'package:assignment2/Services/FireBaseEvent.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:assignment2/Services/FirebaseAuthService.dart';
@@ -144,5 +145,35 @@ void main() {
       verify(mockCollection.add(any))
           .called(1); // verrifies that called on evnets and added
     });
+  });
+
+  test('Update an Event', () async {
+    const event_id = 4;
+    final event = EventModel(
+      id: '$event_id',
+      eventName: 'Created Event',
+      venue: 'Main Hall',
+      eventAuthor: 'Creator',
+      date: '2025-05-20',
+      timing: '7:00 PM',
+      rsvp: 'Going',
+      image: '',
+      category: 'Art',
+      authorId: '789',
+    );
+
+    final mockCollection = MockCollectionReference<Map<String, dynamic>>();
+    final mockDocRef = MockDocumentReference<Map<String, dynamic>>();
+
+    when(mockFirestore.collection('events')).thenReturn(mockCollection);
+
+    when(mockCollection.doc(any)).thenReturn(mockDocRef);
+    when(mockDocRef.set(any)).thenAnswer((_) async => Future.value());
+
+    await firebaseEvent.updateEventInFirestore(event);
+
+    verify(mockCollection.doc(event.id)).called(1);
+
+    verify(mockDocRef.set(any)).called(1);
   });
 }

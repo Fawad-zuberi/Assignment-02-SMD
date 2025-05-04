@@ -9,7 +9,7 @@ class FirebaseEvent {
   FirebaseEvent(this._auth, this._firestore);
 
   Future<List<EventModel>> fetchEventsForUser(String userId) async {
-    final querySnapshot = await FirebaseFirestore.instance
+    final querySnapshot = await _firestore
         .collection('events')
         .where('uidAuthor', isEqualTo: userId)
         .get();
@@ -22,8 +22,7 @@ class FirebaseEvent {
 
   // Fetch all events
   Future<List<EventModel>> fetchAllEvents() async {
-    final querySnapshot =
-        await FirebaseFirestore.instance.collection('events').get();
+    final querySnapshot = await _firestore.collection('events').get();
 
     return querySnapshot.docs.map((doc) {
       final data = doc.data();
@@ -54,7 +53,7 @@ class FirebaseEvent {
       'uidAuthor': event.authorId,
     };
 
-    await FirebaseFirestore.instance.collection('events').add(eventToPost);
+    await _firestore.collection('events').add(eventToPost);
   }
 
   // Update an event in Firestore
@@ -81,9 +80,6 @@ class FirebaseEvent {
       'uidAuthor': event.authorId,
     };
 
-    await FirebaseFirestore.instance
-        .collection('events')
-        .doc(event.id)
-        .set(eventToPost);
+    await _firestore.collection('events').doc(event.id).set(eventToPost);
   }
 }
