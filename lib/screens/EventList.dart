@@ -1,6 +1,9 @@
 import 'package:assignment2/BloC/Auth_Bloc.dart';
 import 'package:assignment2/BloC/Auth_state.dart';
-import 'package:assignment2/screens/CreateEventScree.dart';
+import 'package:assignment2/BloC/Event_Bloc/Event_bloc.dart';
+import 'package:assignment2/BloC/Event_Bloc/Event_events.dart';
+import 'package:assignment2/BloC/Event_Bloc/Event_state.dart';
+import 'package:assignment2/Model/EventDataModel.dart';
 import 'package:assignment2/screens/ProfileScreen.dart';
 import 'package:assignment2/widgets/EventCard.dart';
 import 'package:flutter/material.dart';
@@ -14,131 +17,105 @@ class EventListScreen extends StatefulWidget {
   _EventListScreenState createState() => _EventListScreenState();
 }
 
-class _EventListScreenState extends State<EventListScreen> {
-  final List<Map<String, String>> allEvents = [
-    {
-      'eventName': 'Music Concert',
-      'category': 'Music',
-      'venue': 'Madison Square Garden',
-      'date': '10/12/25',
-      'eventAuthor': 'John Doe',
-      'timing': '8:00 PM - 11:00 PM',
-      'rsvp': '123-456-7890',
-      'image': 'assets/images/music.jpg'
-    },
-    {
-      'eventName': 'Tech Conference',
-      'category': 'Technology',
-      'venue': 'Silicon Valley',
-      'eventAuthor': 'Tech Guru',
-      'date': '10/12/25',
-      'timing': '9:00 AM - 5:00 PM',
-      'rsvp': '987-654-3210',
-      'image': 'assets/images/tech.jpg'
-    },
-    {
-      'eventName': 'Art Exhibition',
-      'category': 'Art',
-      'venue': 'Louvre Museum',
-      'eventAuthor': 'Marie Curie',
-      'date': '10/12/25',
-      'timing': '10:00 AM - 6:00 PM',
-      'rsvp': '321-654-9870',
-      'image': 'assets/images/art.jpeg'
-    },
-    {
-      'eventName': 'ExChairman PTI Video Conference',
-      'category': 'Politics',
-      'venue': 'PTI Media Platforms',
-      'eventAuthor': 'PTI',
-      'date': '10/12/25',
-      'timing': '10:00 AM - 6:00 PM',
-      'rsvp': '321-654-9870',
-      'image': 'assets/images/politics.jpeg'
-    },
-  ];
-
+class _EventListScreenState extends State<EventListScreen> with RouteAware {
   String selectedCategory = 'All';
 
-  List<Map<String, String>> get filteredEvents {
-    if (selectedCategory == 'All') {
-      return allEvents;
-    } else {
-      return allEvents
-          .where((event) => event['category'] == selectedCategory)
-          .toList();
-    }
+  @override
+  void initState() {
+    super.initState();
+    context.read<EventBloc>().add(FetchEventsAll());
+  }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
+  // }
+
+  // @override
+  // void dispose() {
+  //   routeObserver.unsubscribe(this);
+  //   super.dispose();
+  // }
+
+  // @override
+  // void didPopNext() {
+  //   context.read<EventBloc>().add(FetchEventsAll());
+  // }
+
+  List<EventModel> filterEvents(List<EventModel> events) {
+    if (selectedCategory == 'All') return events;
+    return events.where((event) => event.category == selectedCategory).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              if (state is! Authenticated) {
-                Fluttertoast.showToast(
-                    msg: "Please Login to Continue",
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                    backgroundColor: Colors.red,
-                    gravity: ToastGravity.TOP);
-              } else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CreateEventScreen()));
-              }
-            },
-            child: Icon(
-              Icons.post_add_rounded,
-              size: 30,
-            ),
-          ),
-          appBar: AppBar(
-            shadowColor: Colors.black,
-            foregroundColor: Colors.white,
-            title: const Text('Upcoming Events',
-                style: TextStyle(color: Colors.white)),
-            backgroundColor: Colors.blueAccent,
-            actions: [
-              if (state is Authenticated)
-                IconButton(
-                  icon: const Icon(
-                    Icons.person_2_rounded,
-                    color: Colors.black,
-                    size: 40,
-                  ),
-                  onPressed: () {
+      builder: (context, authState) {
+        return BlocBuilder<EventBloc, EventState>(
+          builder: (context, eventState) {
+            return Scaffold(
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  if (authState is! Authenticated) {
+                    Fluttertoast.showToast(
+                      msg: "Please Login to Continue",
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                      backgroundColor: Colors.red,
+                      gravity: ToastGravity.TOP,
+                    );
+                  } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ProfileScreen()),
-                    );
-                  },
-                ),
-            ],
-          ),
-          body: Column(
-            children: [
-              // Filter bar
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Container(
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      children: [
-                        'All',
-                        'Music',
-                        'Technology',
-                        'Art',
-                        'Politics'
-                      ]
-                          .map((category) => Padding(
+                        builder: (context) => ProfileScreen(),
+                      ),
+                    ).then((_) {
+                      context.read<EventBloc>().add(FetchEventsAll());
+                    });
+                  }
+                },
+                child: const Icon(Icons.post_add_rounded, size: 30),
+              ),
+              appBar: AppBar(
+                shadowColor: Colors.black,
+                foregroundColor: Colors.white,
+                title: const Text('Upcoming Events',
+                    style: TextStyle(color: Colors.white)),
+                backgroundColor: Colors.blueAccent,
+                actions: [
+                  if (authState is Authenticated)
+                    IconButton(
+                      icon: const Icon(Icons.person_2_rounded,
+                          color: Colors.black, size: 40),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ProfileScreen()),
+                        );
+                      },
+                    ),
+                ],
+              ),
+              body: Column(
+                children: [
+                  // Category filter bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          'All',
+                          'Music',
+                          'Technology',
+                          'Art',
+                          'Politics'
+                        ]
+                            .map(
+                              (category) => Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: ElevatedButton(
@@ -148,35 +125,61 @@ class _EventListScreenState extends State<EventListScreen> {
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          selectedCategory == category
-                                              ? Colors.blueAccent
-                                              : const Color.fromARGB(
-                                                  255, 183, 179, 179),
-                                      elevation: 10,
-                                      shadowColor: Colors.black),
-                                  child: Text(
-                                    category,
-                                    style: TextStyle(color: Colors.white),
+                                    backgroundColor:
+                                        selectedCategory == category
+                                            ? Colors.blueAccent
+                                            : const Color.fromARGB(
+                                                255, 183, 179, 179),
+                                    elevation: 10,
+                                    shadowColor: Colors.black,
                                   ),
+                                  child: Text(category,
+                                      style:
+                                          const TextStyle(color: Colors.white)),
                                 ),
-                              ))
-                          .toList(),
+                              ),
+                            )
+                            .toList(),
+                      ),
                     ),
                   ),
-                ),
+
+                  Expanded(
+                    child: Builder(
+                      builder: (_) {
+                        if (eventState is EventLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+
+                        if (eventState is EventFetchError) {
+                          return Center(
+                              child: Text('Error: ${eventState.msg}'));
+                        }
+
+                        if (eventState is EventFetched) {
+                          final filtered = filterEvents(eventState.Event);
+                          if (filtered.isEmpty) {
+                            return const Center(
+                                child:
+                                    Text("No events found in this category."));
+                          }
+                          return ListView.builder(
+                            itemCount: filtered.length,
+                            itemBuilder: (context, index) {
+                              return EventCard(event: filtered[index]);
+                            },
+                          );
+                        }
+
+                        return const Center(child: Text("Fetching events..."));
+                      },
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: filteredEvents.length,
-                  itemBuilder: (context, index) {
-                    final event = filteredEvents[index];
-                    return EventCard(event: event);
-                  },
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

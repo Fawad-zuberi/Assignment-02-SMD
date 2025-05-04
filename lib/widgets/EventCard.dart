@@ -1,12 +1,13 @@
 import 'package:assignment2/BloC/Auth_Bloc.dart';
 import 'package:assignment2/BloC/Auth_state.dart';
+import 'package:assignment2/Model/EventDataModel.dart';
 import 'package:assignment2/screens/DetailView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class EventCard extends StatelessWidget {
-  final Map<String, String> event;
+  final EventModel event;
 
   bool? islogged;
 
@@ -53,7 +54,7 @@ class EventCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: Image.asset(
-                  event['image']!,
+                  event.image!,
                   height: 180,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -65,7 +66,7 @@ class EventCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      event['eventName']!,
+                      event.eventName!,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -74,7 +75,7 @@ class EventCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Venue: ${event['venue']}',
+                      'Venue: ${event.venue}',
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.blueGrey,
@@ -82,7 +83,7 @@ class EventCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Date: ${event['date']}',
+                      'Date: ${event.date}',
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.blueGrey,
@@ -90,7 +91,7 @@ class EventCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Time: ${event['timing']}',
+                      'Time: ${event.timing}',
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.blueGrey,
