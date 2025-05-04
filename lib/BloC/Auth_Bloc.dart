@@ -36,7 +36,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthState> {
         print("User document not found in Firestore.");
       }
 
-      emit(Authenticated(userData!));
+      emit(Authenticated(userData!, uid));
     } on FirebaseAuthException catch (e) {
       emit(Unauthenticated(e.message));
     } catch (e) {
@@ -88,8 +88,7 @@ class AuthBloc extends Bloc<AuthEvents, AuthState> {
 
       final userModel = Userdatamodel.fromJson(userMap);
 
-      // Emit Authenticated state with model
-      emit(Authenticated(userModel));
+      emit(Authenticated(userModel, uid));
     } on FirebaseAuthException catch (e) {
       emit(Unauthenticated(e.message ?? "Signup failed"));
     } catch (e) {

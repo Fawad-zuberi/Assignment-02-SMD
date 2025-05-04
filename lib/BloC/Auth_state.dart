@@ -8,8 +8,9 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class Authenticated extends AuthState {
+  final userid;
   Userdatamodel user;
-  Authenticated(this.user);
+  Authenticated(this.user, this.userid);
 }
 
 class Unauthenticated extends AuthState {

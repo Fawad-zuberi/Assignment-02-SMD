@@ -1,4 +1,6 @@
 import 'package:assignment2/BloC/Auth_Bloc.dart';
+import 'package:assignment2/BloC/Event_Bloc/Event_bloc.dart';
+import 'package:assignment2/BloC/Profile_Bloc/Profile_Bloc.dart';
 import 'package:assignment2/firebase_options.dart';
 import 'package:assignment2/screens/HomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,9 +14,19 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    BlocProvider(
-      create: (context) => AuthBloc(FirebaseAuth.instance),
-      child: MyApp(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc(FirebaseAuth.instance),
+        ),
+        BlocProvider<EventBloc>(
+          create: (context) => EventBloc(),
+        ),
+        BlocProvider<ProfileBloc>(
+          create: (context) => ProfileBloc(),
+        ),
+      ],
+      child: const MyApp(),
     ),
   );
 }
