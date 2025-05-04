@@ -4,6 +4,7 @@ import 'package:assignment2/BloC/Event_Bloc/Event_bloc.dart';
 import 'package:assignment2/BloC/Event_Bloc/Event_events.dart';
 import 'package:assignment2/BloC/Event_Bloc/Event_state.dart';
 import 'package:assignment2/Model/EventDataModel.dart';
+import 'package:assignment2/screens/CreateEventScree.dart';
 import 'package:assignment2/screens/ProfileScreen.dart';
 import 'package:assignment2/widgets/EventCard.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class _EventListScreenState extends State<EventListScreen> with RouteAware {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProfileScreen(),
+                        builder: (context) => CreateEventScreen(),
                       ),
                     ).then((_) {
                       context.read<EventBloc>().add(FetchEventsAll());

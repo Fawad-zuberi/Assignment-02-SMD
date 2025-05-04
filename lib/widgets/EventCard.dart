@@ -16,22 +16,17 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is Authenticated) {
-          islogged = true;
-        } else {
-          islogged = false;
-        }
-      },
+      listener: (context, state) {},
       child: GestureDetector(
         onTap: () {
-          if (!islogged!) {
+          final authState = context.read<AuthBloc>().state;
+
+          if (authState is! Authenticated) {
             Fluttertoast.showToast(
-                msg: "Please Login to View Details",
-                textColor: Colors.white,
-                fontSize: 16.0,
-                backgroundColor: Colors.red,
-                gravity: ToastGravity.TOP);
+              msg: "Please Login to View Details",
+              backgroundColor: Colors.red,
+              gravity: ToastGravity.TOP,
+            );
           } else {
             Navigator.push(
               context,

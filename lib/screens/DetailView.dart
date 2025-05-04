@@ -112,6 +112,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     fit: BoxFit.cover,
                   ),
                 ),
+
                 const SizedBox(height: 20),
 
                 // Event Title
@@ -264,37 +265,39 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        final updatedEvent = EventModel(
-                          eventName: eventNameController.text,
-                          eventAuthor: eventAuthorController.text,
-                          category: categoryController.text,
-                          venue: venueController.text,
-                          date: dateController.text,
-                          timing: timingController.text,
-                          rsvp: rsvpController.text,
-                          image: widget.event.image,
-                          authorId: widget.event.authorId,
-                          id: widget.event.id,
-                        );
-
-                        context
-                            .read<EventBloc>()
-                            .add(UpdateEvent(updatedEvent));
-                      },
-                      icon: const Icon(Icons.save),
-                      label: const Text('Save Changes'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 12),
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
+                    if (widget.isEdit)
+                      const SizedBox(
+                        height: 10,
                       ),
-                    ),
+                    if (widget.isEdit)
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          final updatedEvent = EventModel(
+                            eventName: eventNameController.text,
+                            eventAuthor: eventAuthorController.text,
+                            category: categoryController.text,
+                            venue: venueController.text,
+                            date: dateController.text,
+                            timing: timingController.text,
+                            rsvp: rsvpController.text,
+                            image: widget.event.image,
+                            authorId: widget.event.authorId,
+                            id: widget.event.id,
+                          );
+
+                          context
+                              .read<EventBloc>()
+                              .add(UpdateEvent(updatedEvent));
+                        },
+                        icon: const Icon(Icons.save),
+                        label: const Text('Save Changes'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                          backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
                     const SizedBox(height: 20),
                     if (state is EventLoading)
                       const Padding(
