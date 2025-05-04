@@ -309,7 +309,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
                 if (!widget.isEdit) ...[
                   const SizedBox(height: 30),
-                  CommentsSection(),
+                  CommentsSection(event_id: widget.id),
                 ]
               ],
             ),

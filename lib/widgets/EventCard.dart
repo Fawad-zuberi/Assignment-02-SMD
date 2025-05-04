@@ -31,7 +31,10 @@ class EventCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => EventDetailScreen(event: event),
+                builder: (_) => EventDetailScreen(
+                  event: event,
+                  id: event.id,
+                ),
               ),
             );
           }

@@ -27,23 +27,6 @@ class _EventListScreenState extends State<EventListScreen> with RouteAware {
     context.read<EventBloc>().add(FetchEventsAll());
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
-  // }
-
-  // @override
-  // void dispose() {
-  //   routeObserver.unsubscribe(this);
-  //   super.dispose();
-  // }
-
-  // @override
-  // void didPopNext() {
-  //   context.read<EventBloc>().add(FetchEventsAll());
-  // }
-
   List<EventModel> filterEvents(List<EventModel> events) {
     if (selectedCategory == 'All') return events;
     return events.where((event) => event.category == selectedCategory).toList();

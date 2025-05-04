@@ -1,4 +1,5 @@
 import 'package:assignment2/BloC/Auth_Bloc.dart';
+import 'package:assignment2/BloC/Comment_bloc/Comment_bloc.dart';
 import 'package:assignment2/BloC/Event_Bloc/Event_bloc.dart';
 import 'package:assignment2/BloC/Profile_Bloc/Profile_Bloc.dart';
 import 'package:assignment2/firebase_options.dart';
@@ -24,6 +25,9 @@ void main() async {
         ),
         BlocProvider<ProfileBloc>(
           create: (context) => ProfileBloc(),
+        ),
+        BlocProvider<CommentBloc>(
+          create: (context) => CommentBloc(),
         ),
       ],
       child: const MyApp(),
